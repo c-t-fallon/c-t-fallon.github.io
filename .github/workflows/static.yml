@@ -38,7 +38,9 @@ jobs:
         with:
           dotnet-version: '8.0.x'
       - name: Publish app
-        run: dotnet publish BlazorApp -c Release
+        run: |
+          dotnet clean BlazorApp -c Release
+          dotnet publish BlazorApp -c Release
       - name: Rewrite base href
         uses: SteveSandersonMS/ghaction-rewrite-base-href@5b54862a8831e012d4f1a8b2660894415fdde8ec
         with:
@@ -49,8 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: ${{ env.PUBLISH_DIR }}
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
