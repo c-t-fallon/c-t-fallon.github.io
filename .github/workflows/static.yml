@@ -39,8 +39,8 @@ jobs:
           dotnet-version: '8.0.x'
       - name: Publish app
         run: |
-          dotnet clean BlazorApp/BlazorApp.csproj -c Release
-          dotnet publish BlazorApp/BlazorApp.csproj -c Release
+          dotnet clean BlazorApp -c Release
+          dotnet publish BlazorApp -c Release
       - name: Rewrite base href
         uses: SteveSandersonMS/ghaction-rewrite-base-href@5b54862a8831e012d4f1a8b2660894415fdde8ec
         with:
