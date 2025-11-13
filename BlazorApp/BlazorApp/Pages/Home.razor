@@ -1,7 +1,27 @@
 ﻿@page "/"
+@inject IJSRuntime JS
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<button @onclick="ShowAlert">Click me</button>
+
+<canvas id="canvas"></canvas>
+
+<script>
+    async function sendMessage(content){
+        const bridge = window?.chrome?.webview?.hostObjects.bridge;
+        return await bridge?.sendMessage(content);
+    };
+</script>
+
+@code {
+    private async Task ShowAlert()
+    {
+        var response = await JS.InvokeAsync<string>("sendMessage", "test message");
+        await JS.InvokeVoidAsync("alert", response);
+    }
+}
