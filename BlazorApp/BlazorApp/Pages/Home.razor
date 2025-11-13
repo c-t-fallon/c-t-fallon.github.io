@@ -1,27 +1,22 @@
 ﻿@page "/"
-@inject IJSRuntime JS
+@inject IRevitService revitService
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
-
-<button @onclick="ShowAlert">Click me</button>
-
-<canvas id="canvas"></canvas>
-
-<script>
-    async function sendMessage(content){
-        const bridge = window?.chrome?.webview?.hostObjects.bridge;
-        return await bridge?.sendMessage(content);
-    };
-</script>
+<p>@message</p>
 
 @code {
-    private async Task ShowAlert()
+    private string message = "";
+
+    protected override async void OnAfterRender(bool firstRender)
     {
-        var response = await JS.InvokeAsync<string>("sendMessage", "test message");
-        await JS.InvokeVoidAsync("alert", response);
+        if (firstRender)
+        {
+            var document = await revitService.GetActiveDocumentAsync();
+            message = $"Active document title: {document.Title}";
+            StateHasChanged();
+        }
     }
 }
