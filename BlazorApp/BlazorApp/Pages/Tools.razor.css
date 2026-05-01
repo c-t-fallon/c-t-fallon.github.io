@@ -1,0 +1,79 @@
+.tools-heading {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    border: 1px solid #e0e0e0;
+}
+
+.tool-card {
+    padding: 1.1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border: none;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    background: #fff;
+    transition: background 0.1s;
+}
+
+.tool-card:hover {
+    background: #fdfaf7;
+}
+
+.tool-card-date {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.68rem;
+    color: #ccc;
+}
+
+.tool-card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    text-decoration: none;
+    line-height: 1.3;
+}
+
+.tool-card-title:hover {
+    color: #c4956a;
+}
+
+.tool-card-desc {
+    font-size: 0.8rem;
+    color: #777;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.tool-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
+}
+
+.tag {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.65rem;
+    background: #f4f4f4;
+    color: #999;
+    padding: 0.1rem 0.35rem;
+    border-radius: 2px;
+}
+
+.tools-empty {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    color: #bbb;
+}
