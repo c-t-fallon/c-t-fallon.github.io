@@ -18,21 +18,28 @@
         {
             @foreach (var item in Content.Feed)
             {
-                <div class="feed-item">
-                    <span class="feed-date">@item.Date.ToString("yyyy-MM-dd")</span>
-                    <span class="feed-kind @item.Kind.ToString().ToLower()">@item.Kind.ToString().ToLower()</span>
-                    <div class="feed-body">
-                        @if (!string.IsNullOrEmpty(item.Href))
-                        {
-                            <a class="feed-title" href="@item.Href">@item.Title</a>
-                        }
-                        else
-                        {
+                @if (!string.IsNullOrEmpty(item.Href))
+                {
+                    <a class="feed-item feed-item-link" href="@item.Href">
+                        <span class="feed-date">@item.Date.ToString("yyyy-MM-dd")</span>
+                        <span class="feed-kind @item.Kind.ToString().ToLower()">@item.Kind.ToString().ToLower()</span>
+                        <div class="feed-body">
                             <span class="feed-title">@item.Title</span>
-                        }
-                        <p class="feed-desc">@item.Description</p>
+                            <p class="feed-desc">@item.Description</p>
+                        </div>
+                    </a>
+                }
+                else
+                {
+                    <div class="feed-item">
+                        <span class="feed-date">@item.Date.ToString("yyyy-MM-dd")</span>
+                        <span class="feed-kind @item.Kind.ToString().ToLower()">@item.Kind.ToString().ToLower()</span>
+                        <div class="feed-body">
+                            <span class="feed-title">@item.Title</span>
+                            <p class="feed-desc">@item.Description</p>
+                        </div>
                     </div>
-                </div>
+                }
             }
         }
     </div>
