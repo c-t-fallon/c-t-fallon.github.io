@@ -1,0 +1,35 @@
+@page "/tools"
+@inject BlazorApp.Services.ContentService Content
+
+<PageTitle>Tools — c-t-fallon</PageTitle>
+
+<div class="tools-page">
+    <h2 class="tools-heading">tools</h2>
+
+    @if (!Content.Tools.Any())
+    {
+        <p class="tools-empty">nothing here yet.</p>
+    }
+    else
+    {
+        <div class="tools-grid">
+            @foreach (var tool in Content.Tools)
+            {
+                <div class="tool-card">
+                    <div class="tool-card-date">@tool.Date.ToString("yyyy-MM-dd")</div>
+                    <a class="tool-card-title" href="@tool.Href">@tool.Title</a>
+                    <p class="tool-card-desc">@tool.Description</p>
+                    @if (tool.Tags.Length > 0)
+                    {
+                        <div class="tool-card-tags">
+                            @foreach (var tag in tool.Tags)
+                            {
+                                <span class="tag">@tag</span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
