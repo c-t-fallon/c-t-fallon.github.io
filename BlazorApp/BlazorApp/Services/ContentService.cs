@@ -10,6 +10,14 @@ public class ContentService
         // Tools: Kind = FeedItemKind.Tool, Href = route of the tool page
         new()
         {
+            Title = "exploring fluxor: redux-style state in blazor",
+            Description = "Coming from WPF/MVVM and Revit add-in development, I look at what Fluxor brings to Blazor state management and where the mental model shift lands.",
+            Date = new DateOnly(2026, 5, 2),
+            Kind = FeedItemKind.Post,
+            Href = "/posts/fluxor",
+        },
+        new()
+        {
             Title = "intro",
             Description = "What this site is and who's behind it.",
             Date = new DateOnly(2026, 4, 30),
