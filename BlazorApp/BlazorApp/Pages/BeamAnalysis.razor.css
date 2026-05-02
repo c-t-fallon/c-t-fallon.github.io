@@ -1,0 +1,160 @@
+.beam-tool {
+    max-width: 860px;
+}
+
+.beam-tool-header {
+    margin-bottom: 2rem;
+}
+
+.beam-tool-title {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 0.3rem;
+}
+
+.beam-tool-subtitle {
+    font-size: 0.8rem;
+    color: #bbb;
+    margin: 0;
+}
+
+.beam-tool-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Inputs panel */
+
+.inputs-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.panel-heading {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #ccc;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 0.4rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.input-label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.72rem;
+    color: #777;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.num-input {
+    width: 90px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.82rem;
+    color: #1a1a1a;
+    border: 1px solid #e0e0e0;
+    padding: 0.3rem 0.5rem;
+    background: #fafafa;
+    outline: none;
+}
+
+.num-input:focus {
+    border-color: #c4956a;
+    background: #fff;
+}
+
+.select-input {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.82rem;
+    color: #1a1a1a;
+    border: 1px solid #e0e0e0;
+    padding: 0.3rem 0.5rem;
+    background: #fafafa;
+    outline: none;
+    cursor: pointer;
+}
+
+.select-input:focus {
+    border-color: #c4956a;
+}
+
+.unit {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.7rem;
+    color: #bbb;
+}
+
+.run-btn {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+    background: #1a1a1a;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 0.4rem;
+    align-self: flex-start;
+}
+
+.run-btn:hover {
+    background: #c4956a;
+}
+
+/* Results panel */
+
+.results-panel {
+    min-height: 300px;
+    border: 1px solid #e0e0e0;
+    padding: 1.2rem;
+    background: #fafafa;
+}
+
+.results-empty {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.75rem;
+    color: #ccc;
+    margin: 0;
+}
+
+.results-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
+
+.placeholder-note {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.72rem;
+    color: #ccc;
+    margin: 0;
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+    .beam-tool-body {
+        grid-template-columns: 1fr;
+    }
+}
