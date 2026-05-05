@@ -1,0 +1,68 @@
+@page "/posts/{Slug}"
+@inject HttpClient Http
+@inject ContentService ContentService
+
+<PageTitle>@_title — c-t-fallon</PageTitle>
+
+@if (_loading)
+{
+    <p class="post-loading">loading...</p>
+}
+else if (_notFound)
+{
+    <p class="post-loading">post not found.</p>
+}
+else
+{
+    <div class="post">
+        <div class="post-meta">
+            <span class="post-date">@_date</span>
+            <span class="post-kind">post</span>
+        </div>
+        <h1 class="post-title">@_title</h1>
+        <div class="post-body">
+            @((MarkupString)_htmlContent)
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string Slug { get; set; } = "";
+
+    private string _htmlContent = "";
+    private string _title = "";
+    private string _date = "";
+    private bool _loading = true;
+    private bool _notFound = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _notFound = false;
+
+        var item = ContentService.Items.FirstOrDefault(x => x.Href == $"/posts/{Slug}");
+
+        if (item is null)
+        {
+            _notFound = true;
+            _loading = false;
+            return;
+        }
+
+        _title = item.Title;
+        _date = item.Date.ToString("yyyy-MM-dd");
+
+        try
+        {
+            var filename = $"{item.Date:yyyyMMdd}-{Slug}.md";
+            var markdown = await Http.GetStringAsync($"posts/{filename}");
+            _htmlContent = Markdig.Markdown.ToHtml(markdown);
+        }
+        catch
+        {
+            _notFound = true;
+        }
+
+        _loading = false;
+    }
+}
