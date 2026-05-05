@@ -14,7 +14,8 @@
       "PowerShell(Get-Command gh -ErrorAction SilentlyContinue; $env:PATH -split ';' | Where-Object { $_ -match 'github\\\\|gh\\\\|cli' })",
       "PowerShell($env:PATH += \";C:\\\\Program Files\\\\GitHub CLI\"; cd \"C:\\\\repos\\\\c-t-fallon.github.io\"; gh pr list --head develop --json url,title,number 2>&1)",
       "PowerShell(Get-Process -Name dotnet | Where-Object { $_.MainWindowTitle -eq '' } | Stop-Process -Force; Write-Host \"Stopped dotnet processes\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5281/)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5281/)",
+      "PowerShell(Get-ChildItem \"C:\\\\repos\\\\c-t-fallon.github.io\" -Recurse | Where-Object { $_.Extension -eq \".razor\" } | Select-Object -ExpandProperty FullName)"
     ]
   }
 }

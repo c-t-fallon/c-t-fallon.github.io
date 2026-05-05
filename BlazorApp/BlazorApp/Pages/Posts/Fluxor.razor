@@ -90,5 +90,41 @@
             in the phase where everything looks clean because nothing is complicated yet. That's the
             part I want to push on.
         </p>
+
+        <h2>wrapping up: what the code actually showed me</h2>
+        <p>
+            To put some of this to the test, I had AI generate a demo app — a simple beam analysis tool —
+            following the Fluxor pattern explicitly. A familiar enough domain that I could reason about
+            the state design without getting distracted by the problem itself.
+        </p>
+        <p>
+            The thing that stood out most wasn't the Redux mechanics. It was discovering that local
+            component state still has a natural home. Form-like controls — the inputs for adding a
+            distributed load, for example — don't need to live in the store. They're transient UI state,
+            scoped to the lifetime of that component interaction, and forcing them into the store would
+            just add noise. An action for every keystroke is not the point.
+        </p>
+        <p>
+            But beam length is different. Changing the length of the beam has downstream effects on the
+            entire analysis — it belongs in the store because it is the domain state. That distinction
+            turned out to be the clearest heuristic I've found so far: if mutating a value should trigger
+            a recalculation or cause other parts of the app to react, it's store state. If it's just a
+            staging area before the user commits an action, keep it local.
+        </p>
+        <p>
+            The other thing worth noting: Fluxor state persists across navigation. Unlike a local
+            component — which is torn down when you leave and reconstructed when you return — the store
+            doesn't reset unless you tell it to. If you navigate away from the beam tool and come back,
+            the beam is exactly as you left it. That might be what you want. But if you want a clean slate
+            on entry, you're responsible for dispatching a reset action in <code>OnInitializedAsync</code>.
+            It's not a flaw in the pattern, but it's a responsibility shift that isn't obvious until
+            you've stepped on it.
+        </p>
+        <p>
+            The questions I started with — about scale, cross-feature coordination, action namespacing —
+            I still don't have good answers to. But the small experiment at least gave me a clearer
+            picture of where the pattern earns its weight and where it just adds ceremony. That feels
+            like a reasonable place to keep pulling on it.
+        </p>
     </div>
 </div>

@@ -93,10 +93,10 @@ public static class BeamReducers
         var momentPts = Sample(forces.MomentFunction, state.Length, jumpXs);
 
         var results = new BeamResults(
-            ShearX:           shearPts.Select(p => p.x).ToArray(),
-            ShearY:           shearPts.Select(p => p.y).ToArray(),
-            MomentX:          momentPts.Select(p => p.x).ToArray(),
-            MomentY:          momentPts.Select(p => p.y).ToArray(),
+            ShearX:            shearPts.Select(p => p.x).ToArray(),
+            ShearY:            shearPts.Select(p => p.y).ToArray(),
+            MomentX:           momentPts.Select(p => p.x).ToArray(),
+            MomentY:           momentPts.Select(p => p.y).ToArray(),
             LoadingDiagramSvg: BuildLoadingDiagramSvg(state));
 
         return state with { Results = results, ComputeError = null };

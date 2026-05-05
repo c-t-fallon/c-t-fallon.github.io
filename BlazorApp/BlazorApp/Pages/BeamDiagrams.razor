@@ -1,0 +1,58 @@
+@using BlazorApp.Store.BeamState
+@inject IJSRuntime JS
+
+@if (!HasLoads)
+{
+    <div class="alert alert-secondary">add at least one load to see the diagrams.</div>
+}
+else
+{
+    @if (ComputeError is { } err)
+    {
+        <div class="alert alert-danger">@err</div>
+    }
+
+    @if (Results is { } r)
+    {
+        <div class="card mb-3">
+            <div class="card-header fw-semibold">loading diagram</div>
+            <div class="card-body p-2">
+                <svg viewBox="0 0 600 110" style="width:100%;height:110px" xmlns="http://www.w3.org/2000/svg">
+                    @((MarkupString)r.LoadingDiagramSvg)
+                </svg>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header fw-semibold">shear force diagram</div>
+            <div class="card-body p-1">
+                <div id="shear-plot" style="height:240px"></div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header fw-semibold">bending moment diagram</div>
+            <div class="card-body p-1">
+                <div id="moment-plot" style="height:240px"></div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter, EditorRequired] public bool HasLoads { get; set; }
+    [Parameter] public BeamResults? Results { get; set; }
+    [Parameter] public string? ComputeError { get; set; }
+
+    BeamResults? _renderedResults;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Results is { } r && !ReferenceEquals(r, _renderedResults))
+        {
+            _renderedResults = r;
+            await JS.InvokeVoidAsync("beamPlot.render", "shear-plot",  r.ShearX,  r.ShearY,  "Shear (kN)",    "#2563eb");
+            await JS.InvokeVoidAsync("beamPlot.render", "moment-plot", r.MomentX, r.MomentY, "Moment (kN·m)", "#7c3aed");
+        }
+    }
+}
