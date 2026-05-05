@@ -10,6 +10,14 @@ public class ContentService
         // Tools: Kind = FeedItemKind.Tool, Href = route of the tool page
         new()
         {
+            Title = "vibe reviewing",
+            Description = "Describing your high-level take on a PR to an agent and letting it generate the actual comments — early results are surprisingly good.",
+            Date = new DateOnly(2026, 5, 4),
+            Kind = FeedItemKind.Post,
+            Href = "/posts/vibe-reviewing",
+        },
+        new()
+        {
             Title = "beam analysis",
             Description = "Shear and moment diagrams for simple beams using singularity functions.",
             Date = new DateOnly(2026, 5, 2),
