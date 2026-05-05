@@ -1,5 +1,4 @@
 ﻿using BlazorApp.Lib.Functions.Singularity;
-using Liftoff.StructuralEngineering.Functions.Singularity;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 
