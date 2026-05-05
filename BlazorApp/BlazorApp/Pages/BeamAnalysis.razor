@@ -1,0 +1,203 @@
+@page "/tools/beam-analysis"
+@using Fluxor
+@* FluxorComponent wires up IState subscriptions and calls StateHasChanged automatically. *@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IState<BeamState> BeamState
+@inject IDispatcher Dispatcher
+@inject IJSRuntime JS
+
+<PageTitle>Beam Analysis — c-t-fallon</PageTitle>
+
+<h2>beam analysis</h2>
+<p class="text-muted small mb-3">shear &amp; moment via singularity functions</p>
+
+<div class="row g-3">
+    <div class="col-lg-3">
+
+        <div class="card mb-3">
+            <div class="card-header fw-semibold">beam</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label small">length (m)</label>
+                    @* @bind calls the property setter on blur, which dispatches SetBeamLengthAction. *@
+                    <input class="form-control" type="number" min="0.1" step="0.5" @bind="BeamLength" />
+                </div>
+                <div>
+                    <label class="form-label small">support type</label>
+                    @* Blazor converts enum ↔ string via ToString/Parse, matching the option values below. *@
+                    <select class="form-select" @bind="Support">
+                        <option value="SimplySupported">Simply Supported (Pin–Pin)</option>
+                        <option value="Cantilever">Cantilever (Fixed–Free)</option>
+                        <option value="ProppedCantilever">Propped Cantilever (Fixed–Pin)</option>
+                        <option value="FixedFixed">Fixed–Fixed</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header fw-semibold">add load</div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <label class="form-label small">type</label>
+                    @* newType is local component state — no need to put ephemeral form inputs in the store. *@
+                    <select class="form-select" @bind="newType">
+                        <option value="ConcentratedForce">Concentrated Force</option>
+                        <option value="ConcentratedMoment">Concentrated Moment</option>
+                        <option value="DistributedForce">Distributed Force</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">magnitude (@MagnitudeUnit)</label>
+                    <input class="form-control" type="number" step="1" @bind="newMagnitude" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">@(newType == LoadType.DistributedForce ? "start" : "location") (m)</label>
+                    <input class="form-control" type="number" min="0" max="@BeamState.Value.Length" step="0.5" @bind="newLocation" />
+                </div>
+                @if (newType == LoadType.DistributedForce)
+                {
+                    <div class="mb-2">
+                        <label class="form-label small">end (m)</label>
+                        <input class="form-control" type="number" min="0" max="@BeamState.Value.Length" step="0.5" @bind="newEndLocation" />
+                    </div>
+                }
+                <button class="btn btn-primary w-100" @onclick="AddLoad">add load</button>
+                @if (!string.IsNullOrEmpty(validationMessage))
+                {
+                    <div class="text-danger small mt-1">@validationMessage</div>
+                }
+            </div>
+        </div>
+
+        @if (BeamState.Value.Loads.Any())
+        {
+            <div class="card">
+                <div class="card-header fw-semibold">applied loads</div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var load in BeamState.Value.Loads)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-start py-2">
+                            <span class="small">@load.Label</span>
+                            <button class="btn btn-sm btn-outline-danger ms-2 flex-shrink-0"
+                                    @onclick="() => Dispatcher.Dispatch(new RemoveLoadAction(load.Id))">&times;</button>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+
+    </div>
+
+    <div class="col-lg-9">
+        @if (!BeamState.Value.Loads.Any())
+        {
+            <div class="alert alert-secondary">add at least one load to see the diagrams.</div>
+        }
+        else
+        {
+            @if (BeamState.Value.ComputeError is { } err)
+            {
+                <div class="alert alert-danger">@err</div>
+            }
+
+            @if (BeamState.Value.Results is { } r)
+            {
+                <div class="card mb-3">
+                    <div class="card-header fw-semibold">loading diagram</div>
+                    <div class="card-body p-2">
+                        <svg viewBox="0 0 600 110" style="width:100%;height:110px" xmlns="http://www.w3.org/2000/svg">
+                            @((MarkupString)r.LoadingDiagramSvg)
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header fw-semibold">shear force diagram</div>
+                    <div class="card-body p-1">
+                        <div id="shear-plot" style="height:240px"></div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header fw-semibold">bending moment diagram</div>
+                    <div class="card-body p-1">
+                        <div id="moment-plot" style="height:240px"></div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    // ── JS interop ────────────────────────────────────────────────────────────
+    // Track the last rendered results by reference. The reducer always produces a
+    // new BeamResults record on recompute, so a changed reference means new data.
+    BeamResults? _renderedResults;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (BeamState.Value.Results is { } r && !ReferenceEquals(r, _renderedResults))
+        {
+            _renderedResults = r;
+            await JS.InvokeVoidAsync("beamPlot.render", "shear-plot",  r.ShearX,  r.ShearY,  "Shear (kN)",    "#2563eb");
+            await JS.InvokeVoidAsync("beamPlot.render", "moment-plot", r.MomentX, r.MomentY, "Moment (kN·m)", "#7c3aed");
+        }
+    }
+
+    // ── Local form state ───────────────────────────────────────────────────────
+    // These fields are ephemeral UI — they only matter while the user is filling
+    // out the "add load" form. There's no reason to push them into the global
+    // store; local state is still the right tool for transient component data.
+
+    LoadType newType     = LoadType.ConcentratedForce;
+    double   newMagnitude = 10.0;
+    double   newLocation  = 5.0;
+    double   newEndLocation = 8.0;
+    string   validationMessage = "";
+
+    // ── Store-backed computed properties ──────────────────────────────────────
+    // These wrap IState<BeamState>.Value reads and translate writes into action
+    // dispatches — the standard Fluxor pattern for two-way @bind on store state.
+
+    double BeamLength
+    {
+        get => BeamState.Value.Length;
+        set => Dispatcher.Dispatch(new SetBeamLengthAction(value));
+    }
+
+    SupportType Support
+    {
+        get => BeamState.Value.Support;
+        set => Dispatcher.Dispatch(new SetSupportTypeAction(value));
+    }
+
+    string MagnitudeUnit => newType switch
+    {
+        LoadType.ConcentratedForce  => "kN",
+        LoadType.ConcentratedMoment => "kN·m",
+        LoadType.DistributedForce   => "kN/m",
+        _                           => ""
+    };
+
+    // ── Load management ────────────────────────────────────────────────────────
+
+    void AddLoad()
+    {
+        validationMessage = "";
+
+        if (newLocation < 0 || newLocation > BeamState.Value.Length)
+        {
+            validationMessage = $"location must be between 0 and {BeamState.Value.Length} m.";
+            return;
+        }
+        if (newType == LoadType.DistributedForce && newEndLocation <= newLocation)
+        {
+            validationMessage = "end location must be greater than start.";
+            return;
+        }
+
+        Dispatcher.Dispatch(new AddLoadAction(newType, newMagnitude, newLocation, newEndLocation));
+    }
+}

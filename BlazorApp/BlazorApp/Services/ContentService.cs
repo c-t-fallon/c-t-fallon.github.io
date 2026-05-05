@@ -10,6 +10,31 @@ public class ContentService
         // Tools: Kind = FeedItemKind.Tool, Href = route of the tool page
         new()
         {
+            Title = "vibe reviewing",
+            Description = "Describing your high-level take on a PR to an agent and letting it generate the actual comments — early results are surprisingly good.",
+            Date = new DateOnly(2026, 5, 4),
+            Kind = FeedItemKind.Post,
+            Href = "/posts/vibe-reviewing",
+        },
+        new()
+        {
+            Title = "beam analysis",
+            Description = "Shear and moment diagrams for simple beams using singularity functions.",
+            Date = new DateOnly(2026, 5, 2),
+            Kind = FeedItemKind.Tool,
+            Href = "/tools/beam-analysis",
+            Tags = ["structural", "beams"],
+        },
+        new()
+        {
+            Title = "exploring fluxor: redux-style state in blazor",
+            Description = "Coming from WPF/MVVM and Revit add-in development, I look at what Fluxor brings to Blazor state management and where the mental model shift lands.",
+            Date = new DateOnly(2026, 5, 2),
+            Kind = FeedItemKind.Post,
+            Href = "/posts/fluxor",
+        },
+        new()
+        {
             Title = "intro",
             Description = "What this site is and who's behind it.",
             Date = new DateOnly(2026, 4, 30),
